@@ -13,6 +13,7 @@ def ismember(A,B):
     Returns:
     res -- array with the positional index where B == A replacing values in A where A == B
     """
+    import numpy as np
 
     # This function takes two arrays, A and B, and checks for matches.
     # Where A matches B, those values of A are replaced by their index in B.
@@ -37,12 +38,28 @@ def ismember(A,B):
 def makePSTH(spikes,triggers,edges):
     """makes a PSTH given spikes, event triggers, and temporal bin edges.
     
+    *** note: no assumptions of time units here, but the units for each input must match!
+
+    Arguments:
+    spikes -- absolute spike times
+    triggers -- array of event times to zero spike times to
+    edges -- array of time bin edges to compute mean spike rates within
+
+    Returns:
+    psth -- array of n triggers x m edges - 1 containing spike rate in each bin
+    raster -- list of spike times zeroed to each trigger, truncated at the end of edges
+    trials -- list of trial ID for each spike in raster
+    time -- time vector for the PSTH edge centers
+    
+    
     """
+    import numpy as np
     
     # preallocate
     raster = []
     trials = []
     psth = np.empty([len(triggers),len(edges)-1])
+    time = edges[:-1] - np.diff(edges).mean()
 
     for i,trig in enumerate(triggers):
 
@@ -58,4 +75,4 @@ def makePSTH(spikes,triggers,edges):
         raster.extend(spks)
         trials.extend(np.ones(len(spks))*(i+1))
     
-    return [psth,raster,trials]
+    return [psth,raster,trials,time]
